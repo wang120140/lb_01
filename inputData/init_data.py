@@ -46,6 +46,7 @@ def readExcel():
         li_year.append((
             str(df["账号"][i]),#账号
             str(df["姓名"][i]),#姓名
+            str(df["微信号"][i]),# 微信号
             str("0"),
             str("0"),
             str("0"),
@@ -100,6 +101,7 @@ def mysql_base_year(cursor_p,pram):
      cursor_p.executemany(""" insert into year_2024_sg(                     
                         zhang_hao,
                         xing_ming,
+                        wei_xin,
                         m1,
                         m2,
                         m3,
@@ -111,7 +113,7 @@ def mysql_base_year(cursor_p,pram):
                         m9,
                         m10,
                         m11,
-                        m12) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""", pram)
+                        m12) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""", pram)
      
 try:
 
@@ -127,11 +129,13 @@ try:
     print("数据库连接成功！")
     all_msg=readExcel()
     print("数据读取完毕")
-    # mysql_base_year(cursor,all_msg["db_year"])
-    mysql_base_msg(cursor,all_msg["db_List"])
+    mysql_base_year(cursor,all_msg["db_year"])
+    # mysql_base_msg(cursor,all_msg["db_List"])
     print("数据库插入完毕")
     # 向数据库中插入内容
     conn.commit()
+    # 断开
+    conn.close()
   
 except pymysql.Error as e:
     print("数据库连接失败：", e)
