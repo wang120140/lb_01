@@ -1,6 +1,8 @@
 from w02 import getMyCookie  # 获取单个cookie值
 from w03 import readExcel  # 读取表格数值
 import pandas as pd
+
+import sys
 import datetime
 allValue_w1 = readExcel()  # 读取excl表格信息内容
 
@@ -28,7 +30,7 @@ def changeStr(pram_):
 #
 
 # 这个函数作用是： 获取cookie值 然后写道excl表格中
-for i in range(0,56):
+for i in range(0,212):
     # 获取cookie值
     result1 = getMyCookie(allValue_w1["useValue"][i])
     # 如果获取失败 重新获取cookie值
@@ -40,8 +42,10 @@ for i in range(0,56):
     allValue_w1["allValue"]["cookieValue"][i] = val_coolie
     marks_data = pd.DataFrame(allValue_w1["allValue"])
     marks_data.to_excel(formatted_date+"_cookie.xlsx")
-
+    print("--------------" + str(i) +"--------------" )
 # 导出Excel
 
-
+    print("\r", end="")
+    print("进度: {}%: ".format(i), "▓" * (i // 2), end="")
+    sys.stdout.flush()
 print("---------单个页面结束信息-------------")

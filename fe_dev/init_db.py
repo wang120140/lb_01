@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+# 这个是暴露出数据库连接池
 import pymysql
 from datetime import datetime
 from pymysql import OperationalError

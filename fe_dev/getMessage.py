@@ -2,14 +2,22 @@
 # -*- coding: utf-8 -*-
 import random
 from datetime import datetime
-from fe_dev.init_db import connector
+from init_db import connector
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from gevent.pywsgi import WSGIServer
+import logging
 # 初始化连接
 app = Flask(__name__)
 CORS(app, resources=r'/*')
 
+def request_parse(req_data):
+	#'''解析请求数据并以json形式返回'''
+    if req_data.method == 'POST':
+        data = req_data.json
+    elif req_data.method == 'GET':
+        data = req_data.args
+    return data
 
 @app.route("/test/w", methods=['GET'])
 def test():
@@ -17,7 +25,29 @@ def test():
 
     return jsonify(result)
 
-
+@app.route("/getMessageList",methods=['POST'])
+def getMessageList():
+    data=request_parse(request)
+    start = (data["pageNum"]-1)*data["pageSize"]
+    print(start)
+    print(data)
+    try:
+        result = connector.execute("SELECT * FROM msg_base_sg LIMIT %s OFFSET %s  ",(data["pageSize"], start))
+        resultNum = connector.execute("SELECT COUNT(*) as num FROM msg_base_sg  ")
+        print(resultNum)
+    except Exception as e:
+        print(e)
+        result = []
+    finally:
+        print("结束")
+        print(result)
+    if result is None :
+        return []
+    else:
+        return {
+            "num":resultNum[0]['num'],
+            "arr":result
+        }
 if __name__ == "__main__":
     # app.run(host='0.0.0.0',port=7899)
     http_server = WSGIServer(('0.0.0.0', 7999), app)
