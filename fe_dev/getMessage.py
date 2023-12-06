@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 import random
 from datetime import datetime
 from init_db import connector
@@ -30,6 +31,7 @@ def test():
 
 @app.route("/getMessageList", methods=['POST'])
 def getMessageList():
+    global query_1
     data = request_parse(request)
     start = (data["pageNum"] - 1) * data["pageSize"]
     print(start)
@@ -40,10 +42,13 @@ def getMessageList():
     try:
         # query =  "SELECT * FROM msg_base_sg LIMIT %s OFFSET %s WHERE xing_ming LIKE %s "
         if (data["xing_ming"] == '') and (data["zhang_hao"] == '') and (data["wei_xin"] == '') and (
+                data["gong_zhong"] == '') and (
                 data["is_my"] == ''):
             query = "SELECT * FROM msg_base_sg   "
+            query_1 = "SELECT COUNT(*) as num FROM msg_base_sg  "
         else:
-            query = "SELECT * FROM msg_base_sg    WHERE"
+            query = "SELECT * FROM msg_base_sg    WHERE "
+            query_1 = "SELECT COUNT(*) as num FROM msg_base_sg  WHERE "
         if data["xing_ming"] != '':
             my_sql = my_sql + [" xing_ming LIKE %s "]
             my_query = my_query + ['%' + data["xing_ming"] + '%']
@@ -56,23 +61,31 @@ def getMessageList():
         if data["is_my"] != '':
             my_sql = my_sql + [" is_my LIKE %s "]
             my_query = my_query + ['%' + data["is_my"] + '%']
+        if data["gong_zhong"] != '':
+            my_sql = my_sql + [" gong_zhong LIKE %s "]
+            my_query = my_query + ['%' + data["gong_zhong"] + '%']
         # result = connector.execute(query,(data["pageSize"], start, '%' + _k + '%',))
         print(my_sql)
-        if len(my_sql) == 0 :
+        if len(my_sql) == 0:
             query = query + " LIMIT %s OFFSET %s"
-        elif len(my_sql) == 1 :
+        elif len(my_sql) == 1:
 
             query = query + my_sql[0] + " LIMIT %s OFFSET %s"
+            query_1 = query_1 + my_sql[0]
         else:
             co_ = 'AND '.join(my_sql)
             query = query + co_ + " LIMIT %s OFFSET %s"
+            query_1 = query_1 + co_
+        my_query_1 = copy.deepcopy(my_query)
         my_query = my_query + [data["pageSize"], start, ]
+
         print((data["pageSize"], start, '%' + _k + '%',))
         print(query)
+        print(query_1)
         print(tuple(my_query))
 
         result = connector.execute(query, tuple(my_query))
-        resultNum = connector.execute("SELECT COUNT(*) as num FROM msg_base_sg  ")
+        resultNum = connector.execute(query_1, tuple(my_query_1))
         print(resultNum)
     except Exception as e:
         print(e)
