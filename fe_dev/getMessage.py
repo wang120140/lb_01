@@ -34,14 +34,12 @@ def getMessageList():
     global query_1
     data = request_parse(request)
     start = (data["pageNum"] - 1) * data["pageSize"]
-    print(start)
-    print(data)
     _k = "王"
     my_sql = []
     my_query = []
     try:
         # query =  "SELECT * FROM msg_base_sg LIMIT %s OFFSET %s WHERE xing_ming LIKE %s "
-        if (data["xing_ming"] == '') and (data["zhang_hao"] == '') and (data["wei_xin"] == '') and (
+        if (data["xing_ming"] == '') and (data["gong_hao"] == '') and (data["wei_xin"] == '') and (
                 data["gong_zhong"] == '') and (
                 data["is_my"] == ''):
             query = "SELECT * FROM msg_base_sg   "
@@ -52,9 +50,9 @@ def getMessageList():
         if data["xing_ming"] != '':
             my_sql = my_sql + [" xing_ming LIKE %s "]
             my_query = my_query + ['%' + data["xing_ming"] + '%']
-        if data["zhang_hao"] != '':
-            my_sql = my_sql + [" zhang_hao LIKE %s "]
-            my_query = my_query + ['%' + data["zhang_hao"] + '%']
+        if data["gong_hao"] != '':
+            my_sql = my_sql + [" gong_hao LIKE %s "]
+            my_query = my_query + ['%' + data["gong_hao"] + '%']
         if data["wei_xin"] != '':
             my_sql = my_sql + [" wei_xin LIKE %s "]
             my_query = my_query + ['%' + data["wei_xin"] + '%']
@@ -79,11 +77,6 @@ def getMessageList():
         my_query_1 = copy.deepcopy(my_query)
         my_query = my_query + [data["pageSize"], start, ]
 
-        print((data["pageSize"], start, '%' + _k + '%',))
-        print(query)
-        print(query_1)
-        print(tuple(my_query))
-
         result = connector.execute(query, tuple(my_query))
         resultNum = connector.execute(query_1, tuple(my_query_1))
         print(resultNum)
@@ -100,6 +93,32 @@ def getMessageList():
             "num": resultNum[0]['num'],
             "arr": result
         }
+
+@app.route("/updataOrAdd",methods=['POST'])
+def updataOrAdd():
+    data_1 = request_parse(request)
+    query_1 = 'INSERT INTO msg_base_sg(xing_ming, gong_hao, mi_ma, wei_xin, gong_zhong, fen_shu, mi_is_right, is_year, is_my, cookie_value, is_continue, is_timeout) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    my_query_1 = [data_1["xing_ming"], data_1["gong_hao"], data_1["mi_ma"],
+                  data_1["wei_xin"], data_1["gong_zhong"], data_1["fen_shu"],
+                  data_1["mi_is_right"], data_1["is_year"], data_1["is_my"],
+                  "1", "1", "1"
+                  ]
+    print(query_1)
+    print(tuple(my_query_1))
+    data_1["cookie_value"] = "1"
+    data_1["is_continue"] = "1"
+    data_1["is_timeout"] = "1"
+    print(data_1)
+    # result_1 = connector.insert(query_1, tuple(my_query_1))
+    # connector.commit()
+    # print(result_1)
+    connector.insert('msg_base_sg', data_1)
+    result_1 = connector.execute("SELECT * FROM msg_base_sg WHERE gong_hao = %s", (data_1["gong_hao"],))
+    print(result_1)
+    if len(result_1) >= 1:
+        return {"code": "200", "msg": "成功"}
+    else:
+        return {"code": "400", "msg": "失败"}
 
 
 if __name__ == "__main__":
