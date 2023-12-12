@@ -94,7 +94,8 @@ def getMessageList():
             "arr": result
         }
 
-@app.route("/updataOrAdd",methods=['POST'])
+
+@app.route("/updataOrAdd", methods=['POST'])
 def updataOrAdd():
     data_1 = request_parse(request)
     query_1 = 'INSERT INTO msg_base_sg(xing_ming, gong_hao, mi_ma, wei_xin, gong_zhong, fen_shu, mi_is_right, is_year, is_my, cookie_value, is_continue, is_timeout) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
@@ -103,21 +104,23 @@ def updataOrAdd():
                   data_1["mi_is_right"], data_1["is_year"], data_1["is_my"],
                   "1", "1", "1"
                   ]
-    print(query_1)
-    print(tuple(my_query_1))
+
     data_1["cookie_value"] = "1"
     data_1["is_continue"] = "1"
     data_1["is_timeout"] = "1"
-    print(data_1)
+
     # result_1 = connector.insert(query_1, tuple(my_query_1))
     # connector.commit()
     # print(result_1)
-    connector.insert('msg_base_sg', data_1)
+
     result_1 = connector.execute("SELECT * FROM msg_base_sg WHERE gong_hao = %s", (data_1["gong_hao"],))
     print(result_1)
     if len(result_1) >= 1:
+        where_clause = "gong_hao = %s"
+        connector.update('msg_base_sg', data_1, where_clause, [data_1["gong_hao"]])
         return {"code": "200", "msg": "成功"}
     else:
+        connector.insert('msg_base_sg', data_1)
         return {"code": "400", "msg": "失败"}
 
 

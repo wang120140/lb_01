@@ -88,7 +88,7 @@ def mysql_base_msg(cursor_p,pram):
                         wei_xin,
                         gong_zhong,
                         xing_ming,
-                        zhang_hao,
+                        gong_hao,
                         mi_ma,
                         fen_shu,
                         cookie_value,
@@ -99,7 +99,7 @@ def mysql_base_msg(cursor_p,pram):
                         is_my) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""", pram)
 def mysql_base_year(cursor_p,pram):
      cursor_p.executemany(""" insert into year_2024_sg(                     
-                        zhang_hao,
+                        gong_hao,
                         xing_ming,
                         wei_xin,
                         m1,
@@ -129,8 +129,8 @@ try:
     print("数据库连接成功！")
     all_msg=readExcel()
     print("数据读取完毕")
-    mysql_base_year(cursor,all_msg["db_year"])
-    # mysql_base_msg(cursor,all_msg["db_List"])
+    # mysql_base_year(cursor,all_msg["db_year"])
+    mysql_base_msg(cursor,all_msg["db_List"])
     print("数据库插入完毕")
     # 向数据库中插入内容
     conn.commit()

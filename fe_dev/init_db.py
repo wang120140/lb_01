@@ -137,13 +137,13 @@ class MySQLClient:
         params_list = [tuple(data.values()) for data in data_list]
         self.executemany(sql, params_list)
 
-    def update(self, table, data, where_clause):
+    def update(self, table, data, where_clause, param):
         """
         更新数据
         """
         set_clause = ", ".join([f"{key}=%s" for key in data.keys()])
-        sql = f"UPDATE {table} SET {set_clause} WHERE {where_clause}"
-        params = tuple(data.values())
+        sql = f"UPDATE {table} SET {set_clause}  WHERE {where_clause}"
+        params = tuple(list(data.values()) + param)
         self.executemany(sql, [params])
 
     def delete(self, table, where_clause):

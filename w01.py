@@ -30,7 +30,7 @@ def changeStr(pram_):
 #
 
 # 这个函数作用是： 获取cookie值 然后写道excl表格中
-for i in range(0,212):
+for i in range(0, 212):
     # 获取cookie值
     result1 = getMyCookie(allValue_w1["useValue"][i])
     # 如果获取失败 重新获取cookie值
