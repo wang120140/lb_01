@@ -39,7 +39,7 @@ def getMessageList():
     my_query = []
     try:
         # query =  "SELECT * FROM msg_base_sg LIMIT %s OFFSET %s WHERE xing_ming LIKE %s "
-        if (data["xing_ming"] == '') and (data["gong_hao"] == '') and (data["wei_xin"] == '') and (
+        if (data["xing_ming"] == '') and (data["fen_shu"] == '') and (data["gong_hao"] == '') and (data["wei_xin"] == '') and (
                 data["gong_zhong"] == '') and (
                 data["is_my"] == ''):
             query = "SELECT * FROM msg_base_sg   "
@@ -50,6 +50,9 @@ def getMessageList():
         if data["xing_ming"] != '':
             my_sql = my_sql + [" xing_ming LIKE %s "]
             my_query = my_query + ['%' + data["xing_ming"] + '%']
+        if data["fen_shu"] != '':
+            my_sql = my_sql + [" fen_shu LIKE %s "]
+            my_query = my_query + ['%' + data["fen_shu"] + '%']
         if data["gong_hao"] != '':
             my_sql = my_sql + [" gong_hao LIKE %s "]
             my_query = my_query + ['%' + data["gong_hao"] + '%']
