@@ -68,6 +68,7 @@ class MySQLClient:
                 cursor.execute(sql)
             else:
                 cursor.execute(sql, params)
+                conn.commit()
             return [self.__dict_datetime_obj_to_str(row_dict) for row_dict in cursor.fetchall()]
         except Exception as e:
             print(f"Cannot execute query all: {e}")
@@ -146,11 +147,13 @@ class MySQLClient:
         params = tuple(list(data.values()) + param)
         self.executemany(sql, [params])
 
-    def delete(self, table, where_clause):
+    def delete(self, table, where_clause, pram):
         """
         删除数据
         """
         sql = f"DELETE FROM {table} WHERE {where_clause}"
+        print(sql)
+        print(pram)
         self.execute(sql)
 
 

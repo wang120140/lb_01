@@ -121,7 +121,18 @@ def updataOrAdd():
         return {"code": "200", "msg": "成功"}
     else:
         connector.insert('msg_base_sg', data_1)
-        return {"code": "400", "msg": "失败"}
+        return {"code": "200", "msg": "成功"}
+
+
+@app.route("/deletItem", methods=['POST'])
+def deletItem():
+    data_1 = request_parse(request)
+    where_clause = f"gong_hao = '{data_1['gong_hao']}'"
+    # connector.delete('msg_base_sg', where_clause, data_1['gong_hao'])
+
+    result = connector.execute("DELETE FROM msg_base_sg WHERE gong_hao = %s", (data_1['gong_hao'],))
+    print(result)
+    return {}
 
 
 if __name__ == "__main__":
